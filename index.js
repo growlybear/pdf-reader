@@ -10,7 +10,7 @@ var jf = require('jsonfile');
 var pdfDir = path.join(__dirname, 'pdf');
 var jsonDir = path.join(__dirname, 'json');
 
-var file = 'new+civil+cases+filed+13-02-2015+to+27-02-2015.pdf';
+var file = 'new+civil+cases+filed+19-02-2015+to+05-03-2015.pdf';
 
 var origin = path.join(pdfDir, file);
 var dest = path.join(jsonDir, file.replace('.pdf', '.json'));
@@ -68,7 +68,7 @@ pdfText(origin, function (err, chunks) {
       var filedDate = cleaned.pop();
       var locality = cleaned.pop();
       // ... until whatever's left must be the Case Title - TOO EASY!!
-      var caseTitle = cleaned.join(' ').replace(/\s+/g, ' ');
+      var caseTitle = cleaned.join(' ').replace(/\s+/g, ' ').trim();
 
       var obj = {
         caseNumber: caseNumber,
