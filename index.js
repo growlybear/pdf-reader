@@ -52,16 +52,18 @@ pdfText(origin, function (err, chunks) {
   }, []);
 
   slices.forEach(function (piece) {
-    // isolate full info for each case, beginning at the Case Number and ending at Case Status
+
+    // collect info for each case, beginning at the Case Number
     var caseInfo = chunks.slice(piece[0], piece[1]);
-    // remove unnecessary disclaimers and stray headers caught across pages
+
+    // remove excess collected info, including disclaimers and cross-pages headers
     // cf. http://stackoverflow.com/questions/6449131/javascript-regular-expression-to-not-match-a-word
     var cleaned = a.spliceWhile(caseInfo, 0, /^((?!(DISCLAIMER)).)*$/);
 
-    // select only cases with COM Mortgages action codes
+    // now select only cases with COM Mortgages action codes
     if (a.exists(cleaned, 'COM Mortgages & Other Securities')) {
 
-      // Pick off all the easily identifiable pieces of information ...
+      // pick off all the easily identifiable pieces of information ...
       var caseNumber = cleaned.shift();
       var caseStatus = cleaned.pop();
       var actionCode = cleaned.pop();
