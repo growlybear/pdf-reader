@@ -61,14 +61,14 @@ pdfText(origin, function (err, chunks) {
     // select only cases with COM Mortgages action codes
     if (a.exists(cleaned, 'COM Mortgages & Other Securities')) {
 
-      // Pick off all easily identifiable pieces of information
+      // Pick off all the easily identifiable pieces of information ...
       var caseNumber = cleaned.shift();
       var caseStatus = cleaned.pop();
       var actionCode = cleaned.pop();
       var filedDate = cleaned.pop();
       var locality = cleaned.pop();
-      // ... until whatever's left must be the Case Title - EASY!!
-      var caseTitle = cleaned.join(' ');
+      // ... until whatever's left must be the Case Title - TOO EASY!!
+      var caseTitle = cleaned.join(' ').replace(/\s+/g, ' ');
 
       var obj = {
         caseNumber: caseNumber,
@@ -85,7 +85,7 @@ pdfText(origin, function (err, chunks) {
 
   console.log(relevant);
 
-  // jf.writeFile(dest, chunks, function (err) {
-  //   console.log(err);
-  // });
+  jf.writeFile(dest, relevant, function (err) {
+    console.log(err);
+  });
 });
