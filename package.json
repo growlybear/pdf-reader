@@ -1,0 +1,11 @@
+{
+  "name": "pdf-reader",
+  "version": "1.0.0",
+  "description": "Extract relevant data from pdf documents",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Allan <michaelallan@optushome.com.au>",
+  "license": "ISC"
+}
