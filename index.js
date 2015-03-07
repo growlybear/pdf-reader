@@ -1,9 +1,7 @@
 var path = require('path');
-var fs = require('fs');
 
 // var reader = require('array-reader');
 var a = require('array-tools');
-
 var pdfText = require('pdf-text');
 var jf = require('jsonfile');
 
@@ -15,15 +13,14 @@ var file = 'new+civil+cases+filed+19-02-2015+to+05-03-2015.pdf';
 var origin = path.join(pdfDir, file);
 var dest = path.join(jsonDir, file.replace('.pdf', '.json'));
 
+
 function exit(err) {
   console.log(err);
   process.exit(1);
 }
 
-// NOTE Select ONLY the Case Number which occupies the entire chunk, as some chunks
-// contain a superfluous copy of that number at the start of the Case Title
-var caseNumber = /^S\s+CI\s+2015\s+\d{5}$/;
 
+// main process to extract, transform and save relevant data from Court List pdf
 pdfText(origin, function (err, chunks) {
 
   if (err) exit(err);
@@ -31,7 +28,11 @@ pdfText(origin, function (err, chunks) {
   var temp = chunks;
   var relevant = [];
 
-  // Find the index of each Case Number in the chunks array
+  // NOTE select ONLY the Case Number which occupies the entire chunk, as some chunks
+  // contain a superfluous copy of that number at the start of the Case Title
+  var caseNumber = /^S\s+CI\s+2015\s+\d{5}$/;
+
+  // find the index of each Case Number in the chunks array
   var cases = temp.reduce(function (res, curr, i) {
     if (caseNumber.test(curr)) {
       res.push(i);
@@ -39,18 +40,20 @@ pdfText(origin, function (err, chunks) {
     return res;
   }, []);
 
+  // create array pairs of indices for slices of information from one Case Number to the next
   var slices = cases.reduce(function (res, curr, i) {
     var ret = [];
     ret[0] = curr;
     ret[1] = cases[i + 1];
 
-    // exclude undefined value at the end of the sequence
+    // exclude the last item, which has no end Case Number
     if (cases[i + 1]) {
       res.push(ret);
     }
     return res;
   }, []);
 
+  // clean and transform each slice of case data
   slices.forEach(function (piece) {
 
     // collect info for each case, beginning at the Case Number
@@ -81,12 +84,15 @@ pdfText(origin, function (err, chunks) {
         locality: locality
       };
 
+      // store this final json object in our relevant results array
       relevant.push(obj);
     }
   });
 
+  // take a look at it
   console.log(relevant);
 
+  // write it to file until we've hooked up a mongo backend
   jf.writeFile(dest, relevant, function (err) {
     console.log(err);
   });
