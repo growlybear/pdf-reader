@@ -1,10 +1,16 @@
+// core modules
 var path = require('path');
 
-// var reader = require('array-reader');
-var a = require('array-tools');
+// 3rd-party modules
 var pdfText = require('pdf-text');
 var jf = require('jsonfile');
+var a = require('array-tools');
+// var reader = require('array-reader');
 
+// custom modules
+
+
+// config
 var pdfDir = path.join(__dirname, 'pdf');
 var jsonDir = path.join(__dirname, 'json');
 
@@ -20,7 +26,7 @@ function exit(err) {
 }
 
 
-// main process to extract, transform and save relevant data from Court List pdf
+// main process to extract, transform and save relevant data from Supreme Court Case List pdf
 pdfText(origin, function (err, chunks) {
 
   if (err) exit(err);
@@ -32,7 +38,7 @@ pdfText(origin, function (err, chunks) {
   // contain a superfluous copy of that number at the start of the Case Title
   var caseNumber = /^S\s+CI\s+2015\s+\d{5}$/;
 
-  // find the index of each Case Number in the chunks array
+  // find the index of each Case Number in a copy of the chunks array
   var cases = temp.reduce(function (res, curr, i) {
     if (caseNumber.test(curr)) {
       res.push(i);
@@ -40,7 +46,7 @@ pdfText(origin, function (err, chunks) {
     return res;
   }, []);
 
-  // create array pairs of indices for slices of information from one Case Number to the next
+  // now create an array of pairs of indices for slices of information from one Case Number to the next
   var slices = cases.reduce(function (res, curr, i) {
     var ret = [];
     ret[0] = curr;
@@ -53,7 +59,7 @@ pdfText(origin, function (err, chunks) {
     return res;
   }, []);
 
-  // clean and transform each slice of case data
+  // process each slice of case data
   slices.forEach(function (piece) {
 
     // collect info for each case, beginning at the Case Number
