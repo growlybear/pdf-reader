@@ -49,6 +49,7 @@ pdfText(origin, function (err, chunks) {
   // now create an array of pairs of indices for slices of information from one Case Number to the next
   var slices = cases.reduce(function (res, curr, i) {
     var ret = [];
+
     ret[0] = curr;
     ret[1] = cases[i + 1];
 
